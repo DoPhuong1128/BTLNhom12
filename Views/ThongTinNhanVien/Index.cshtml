@@ -9,9 +9,13 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+    <a asp-action="Upload">up file excel</a>
 <table class="table">
     <thead>
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MaNhanVien)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.TenNhanVien)
             </th>
@@ -30,6 +34,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaNhanVien)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.TenNhanVien)
             </td>
