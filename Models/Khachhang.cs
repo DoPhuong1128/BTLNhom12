@@ -12,7 +12,7 @@ namespace BTL_Nhom12.Models
         public string? Tenkhachhang{ get; set; }
     
         public string? Diachi { get; set; }
-        public int Sodienthoai { get; set; }
+        public string Sodienthoai { get; set; }
         
     }
 }

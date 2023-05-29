@@ -14,8 +14,8 @@ namespace BTL_Nhom12.Models
         public string? NSX { get; set; }
         public string? Kichco { get; set; }
         public string? Color { get; set; }
-        public int GiaTien { get; set; }
-        public int Soluongton { get; set; }
+        public string GiaTien { get; set; }
+        public string Soluongton { get; set; }
         
     }
 }

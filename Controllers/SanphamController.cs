@@ -7,12 +7,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BTL_Nhom12.Data;
 using BTL_Nhom12.Models;
+using BTL_Nhom12.Models.Process;
 
 namespace BTL_Nhom12.Controllers
 {
     public class SanphamController : Controller
     {
         private readonly ApplicationDbContext _context;
+         StringProcess strPro = new StringProcess();
+        //private ExcelProcess strPro = new ExcelProcess();
 
         public SanphamController(ApplicationDbContext context)
         {
@@ -48,6 +51,18 @@ namespace BTL_Nhom12.Controllers
         // GET: Sanpham/Create
         public IActionResult Create()
         {
+            var newID = "";
+            if (_context.Sanpham.Count() == 0)
+            {
+                //khoi tao 1 ma moi
+                newID = "SP001";
+            }
+            else
+            {
+                var id = _context.Sanpham.OrderByDescending(m => m.MaSanPham).First().MaSanPham;
+                newID = strPro.AutoGenerateKey(id);
+            }
+            ViewBag.MaSanPham = newID;
             return View();
         }
 
@@ -159,5 +174,57 @@ namespace BTL_Nhom12.Controllers
         {
           return (_context.Sanpham?.Any(e => e.MaSanPham == id)).GetValueOrDefault();
         }
+
+        //upload
+
+        //Tạo action Upload file excel lên server
+        private ExcelProcess _excelProcess = new ExcelProcess();
+        public Task<IActionResult> Upload()
+        {
+            return Task.FromResult<IActionResult>(View());
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Upload(IFormFile file)
+        {
+            if (file!=null)
+        {
+            string fileExtension = Path.GetExtension(file.FileName);
+            if (fileExtension!=".xls"&& fileExtension !=".xlsx")
+            {
+                ModelState.AddModelError("","Please choose excel file to upload!");
+            }
+            else
+            {
+                //rename file when upload to server
+                var fileName = DateTime.Now.ToShortTimeString() + fileExtension;
+                var filePath = Path.Combine(Directory.GetCurrentDirectory() + "/Uploads/Excels",fileName);
+                var FileLocation = new FileInfo(filePath).ToString();
+                using (var stream = new FileStream(filePath,FileMode.Create))
+                {
+                    //save file to server
+                    await file.CopyToAsync(stream);
+                    var dt = _excelProcess.ExcelToDataTable(FileLocation);
+                        for (int i = 0; i < dt.Rows.Count; i++)
+                        {
+                            var std = new Sanpham();
+
+                            std.MaSanPham= dt.Rows[i][0].ToString();
+                            std.TenSanPham= dt.Rows[i][1].ToString();
+                            std.DVT = dt.Rows[i][2].ToString();
+                            std.Kichco = dt.Rows[i][3].ToString();
+                            std.Color = dt.Rows[i][4].ToString();
+                            std.GiaTien = dt.Rows[i][5].ToString();
+                            std.Soluongton = dt.Rows[i][6].ToString();
+
+                            _context.Sanpham.Add(std);
+                        }
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                }
+            }
+        }
+        return View();
+        } 
     }
 }

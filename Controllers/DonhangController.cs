@@ -7,12 +7,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BTL_Nhom12.Data;
 using BTL_Nhom12.Models;
+using BTL_Nhom12.Models.Process;
 
 namespace BTL_Nhom12.Controllers
 {
     public class DonhangController : Controller
     {
         private readonly ApplicationDbContext _context;
+         StringProcess strPro = new StringProcess();
+        //private ExcelProcess strPro = new ExcelProcess();
 
         public DonhangController(ApplicationDbContext context)
         {

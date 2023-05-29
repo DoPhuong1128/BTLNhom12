@@ -18,7 +18,7 @@ namespace BTL_Nhom12.Models
         public string? Sanpham { get; set; } 
         public string? Makhachhang { get; set; }
         [ForeignKey("Makhachhang")]
-        public Khachhang ?Khachhang{ get; set; }
+        public Khachhang? Khachhang{ get; set; }
 
 
     }
